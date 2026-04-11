@@ -1,0 +1,22 @@
+[package]
+name = "{{project}}"
+version = "0.1.0"
+edition = "2024"
+description = "{{description}}"
+repository = "{{repo}}"
+readme = "README.md"
+license = "MIT"
+keywords = [""]
+categories = [""]
+
+[dependencies]
+anyhow = "1.0.97"
+thiserror = "2.0.11"
+tracing = "0.1.44"
+
+{% if dev_profile == "FastCompile" -%}
+# FastCompile
+[profile.dev]
+debug = 0
+{% endif %}
+

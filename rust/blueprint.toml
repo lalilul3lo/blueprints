@@ -1,0 +1,37 @@
+[project]
+type = "Text"
+help = "Name of project"
+
+[repo]
+type = "Text"
+help = "Git url of repository"
+
+[description]
+type = "Paragraph"
+help = "Description of project"
+
+[kind]
+type = "Select"
+help = "--bin or --lib"
+choices = [
+  "bin",
+  "lib"
+]
+
+[dev_profile]
+type = "Select"
+help = "Cargo wizard based dev profile"
+choices = [
+  "FastCompile",
+  "FastRuntime",
+  "MinSize"
+]
+
+[release_profile]
+type = "Select"
+help = "Cargo wizard based release profile"
+choices = [
+  "FastCompile",
+  "FastRuntime",
+  "MinSize"
+]
