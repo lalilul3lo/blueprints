@@ -1,0 +1,17 @@
+# Clippy configuration for strict linting
+# https://doc.rust-lang.org/clippy/lint_configuration.html
+
+# Warn on missing documentation
+warn-on-all-wildcard-imports = true
+
+# Cognitive complexity threshold
+cognitive-complexity-threshold = 15
+
+# Type complexity threshold
+type-complexity-threshold = 250
+
+# Disallow certain methods
+disallowed-methods = []
+
+# Disallowed types (add as needed)
+disallowed-types = []

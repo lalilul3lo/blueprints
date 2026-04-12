@@ -1,0 +1,21 @@
+pre-commit:
+  parallel: true
+  commands:
+    fmt:
+      run: cargo fmt -- --check
+      glob: "*.rs"
+    clippy:
+      run: cargo clippy --all-targets --all-features -- -D warnings
+      glob: "*.rs"
+    test:
+      run: cargo nextest run --all-features
+      glob: "*.rs"
+    check:
+      run: cargo check --all-targets --all-features
+      glob: "*.rs"
+
+pre-push:
+  parallel: false
+  # commands:
+  #   test:
+  #     run: cargo nextest run --all-features
