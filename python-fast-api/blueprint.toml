@@ -1,0 +1,50 @@
+[project_name]
+type = "Text"
+help = "Name of your FastAPI project"
+
+[description]
+type = "Paragraph"
+help = "Brief description of the API"
+
+[author]
+type = "Text"
+help = "Author name"
+
+[python_version]
+type = "Select"
+help = "Python version to use"
+choices = [
+  "3.10",
+  "3.11",
+  "3.12",
+  "3.13"
+]
+
+[database]
+type = "Select"
+help = "Database backend to use"
+choices = [
+  "none",
+  "sqlite",
+  "postgresql",
+  "mysql"
+]
+
+[include_auth]
+type = "Confirm"
+help = "Include JWT authentication setup?"
+
+[include_cors]
+type = "Confirm"
+help = "Include CORS middleware configuration?"
+
+[features]
+type = "MultiSelect"
+help = "Select features to include"
+choices = [
+  "logging",
+  "testing",
+  "docker",
+  "ci-cd",
+  "migrations"
+]

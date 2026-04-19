@@ -1,3 +1,5 @@
 [rust]
 path = "./rust"
 
+[python-fast-api]
+path = "./python-fast-api"

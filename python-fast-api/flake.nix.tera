@@ -1,0 +1,65 @@
+{
+  description = "{{ project_name }}";
+
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+
+  inputs.flake-utils.url = "github:numtide/flake-utils";
+
+  outputs =
+    {
+      nixpkgs,
+      flake-utils,
+      ...
+    }:
+    flake-utils.lib.eachDefaultSystem (
+      system:
+      let
+        pkgs = import nixpkgs {
+          inherit system;
+        };
+        python = pkgs.python{{ python_version | replace(from=".", to="") }};
+      in
+      {
+        devShells.default =
+          with pkgs;
+          mkShell {
+            buildInputs = [
+              # Python and package management
+              python
+              uv
+
+              # Development tools
+              pyright
+              ruff
+              {% if "testing" in features %}
+
+              # Testing
+              python.pkgs.pytest
+              python.pkgs.pytest-asyncio
+              {% endif %}
+            ];
+
+            shellHook = ''
+              # Create virtual environment if it doesn't exist
+              if [ ! -d .venv ]; then
+                echo "Creating virtual environment..."
+                uv venv .venv
+              fi
+
+              # Activate virtual environment
+              source .venv/bin/activate
+
+              # Install dependencies
+              if [ -f pyproject.toml ]; then
+                echo "Installing dependencies with uv..."
+                uv pip install -e ".[dev]"
+              fi
+
+              echo "Python development environment ready!"
+              echo "Python version: $(python --version)"
+              echo "Virtual environment: .venv"
+            '';
+          };
+      }
+    );
+}
