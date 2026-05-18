@@ -3,9 +3,9 @@ name = "{{project}}"
 version = "0.1.0"
 edition = "2024"
 description = "{{description}}"
-repository = "{{repo}}"
+repository = "{{repository}}"
 readme = "README.md"
-license = "MIT"
+license = "{{license}}"
 keywords = [""]
 categories = [""]
 
@@ -17,6 +17,51 @@ tracing = "0.1.44"
 {% if dev_profile == "FastCompile" -%}
 # FastCompile
 [profile.dev]
+opt-level = 0
+strip = "none"
+lto = false
+codegen-units = 256
+panic = "abort"
 debug = 0
+{% elif dev_profile == "FastRuntime" -%}
+# FastRuntime
+[profile.dev]
+opt-level = 3
+strip = "none"
+lto = true
+codegen-units = 1
+panic = "abort"
+debug = false
+{% elif dev_profile == "MinBinSize" -%}
+# MinBinSize
+[profile.dev]
+opt-level = "z"
+strip = true
+lto = true
+codegen-units = 1
+panic = "abort"
 {% endif %}
+
+{% if release_profile == "FastCompile" -%}
+# FastCompile
+[profile.release]
+lto = false
+codegen-units = 256
+panic = "abort"
+debug = 0
+{% elif release_profile == "FastRuntime" -%}
+# FastRuntime
+[profile.release]
+lto = true
+codegen-units = 1
+panic = "abort"
+{% elif dev_profile == "MinBinSize" -%}
+# MinBinSize
+[profile.release]
+opt-level = "z"
+strip = true
+lto = true
+codegen-units = 1
+panic = "abort"
+{% endif -%}
 

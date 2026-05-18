@@ -1,9 +1,9 @@
 {
-  description = "{{project}}";
+  description = "{{project}} Development Environment";
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
-  inputs.rust-overlay.url = "github:oxalica/rust-overlay";
+  inputs.crane.url = "github:ipetkov/crane";
 
   inputs.flake-utils.url = "github:numtide/flake-utils";
 
@@ -13,45 +13,120 @@
 
   outputs =
     {
+      self,
+      crane,
       nil,
       nixpkgs,
-      rust-overlay,
       flake-utils,
       ...
     }:
     flake-utils.lib.eachDefaultSystem (
       system:
       let
-        overlays = [ (import rust-overlay) ];
-        pkgs = import nixpkgs {
-          inherit system overlays;
+        pkgs = nixpkgs.legacyPackages.${system};
+        craneLib = crane.mkLib pkgs;
+        {{project}}Crate = craneLib.crateNameFromCargoToml {
+          cargoToml = ./Cargo.toml;
         };
+
         nix-lsp-server = nil.packages.${system}.nil;
+
+        commonArgs = {
+          src = craneLib.cleanCargoSource ./.;
+
+          pname = "{{project}}";
+          inherit ({{project}}Crate) version;
+          strictDeps = true;
+
+          nativeBuildInputs = [ pkgs.pkg-config ];
+          buildInputs = [ pkgs.openssl ];
+        };
+
+        cargoArtifacts = craneLib.buildDepsOnly (
+          commonArgs
+          // {
+            pname = "{{project}}";
+          }
+        );
+
+        {{project}}-clippy = craneLib.cargoClippy (
+          commonArgs
+          // {
+            inherit cargoArtifacts;
+            cargoClippyExtraArgs = "--all-targets --all-features -- --deny warnings";
+          }
+        );
+
+        {{project}}-test = craneLib.cargoNextest (
+          commonArgs
+          // {
+            inherit cargoArtifacts;
+            cargoNextestExtraArgs = "--workspace --all-features";
+          }
+        );
+
+        {{project}}-fmt = craneLib.cargoFmt {
+          src = commonArgs.src;
+        };
+
+        {{project}} = craneLib.buildPackage (
+          commonArgs
+          // {
+            inherit cargoArtifacts;
+            cargoExtraArgs = "--bin {{project}}";
+          }
+        );
       in
       {
-        devShells.default =
-          with pkgs;
-          mkShell {
-            buildInputs = [
-              cargo-nextest
-              cargo-watch
-              just
-              natscli
-              nix-lsp-server
-              openssl
-              pkg-config # needed by openssl to locate headers and libraries
-              rust-analyzer
-              rust-bin.stable.latest.default
-              lefthook
-              just
-            ];
+        packages = {
+          default = {{project}};
+          {{project}} = {{project}};
+        };
 
-            shellHook = ''
-              if [ ! -f .git/hooks/pre-commit ]; then
-                lefthook install
-              fi
-            '';
+        apps = {
+          default = flake-utils.lib.mkApp {
+            drv = {{project}};
+            name = "{{project}}";
           };
+          {{project}} = flake-utils.lib.mkApp {
+            drv = {{project}};
+            name = "{{project}}";
+          };
+        };
+
+        checks = {
+          inherit
+            {{project}}
+            {{project}}-clippy
+            {{project}}-fmt
+            {{project}}-test
+            ;
+
+          default = {{project}};
+        };
+
+        devShells.default = craneLib.devShell {
+          checks = self.checks.${system};
+
+          packages = with pkgs; [
+            {{project}}
+            cargo-dist
+            cargo-nextest
+            cargo-watch
+            just
+            nix-lsp-server
+            openssl
+            pkg-config # needed by openssl to locate headers and libraries
+            rust-analyzer
+            lefthook
+          ];
+
+          shellHook = ''
+            if [ ! -f .git/hooks/pre-commit ]; then
+              lefthook install
+            fi
+          '';
+        };
       }
     );
 }

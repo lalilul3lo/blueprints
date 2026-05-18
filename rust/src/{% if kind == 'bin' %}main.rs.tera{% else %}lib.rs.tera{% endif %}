@@ -1,15 +1,16 @@
 //! {{project}}
 
-{% if kind = "lib" -%}
+{% if kind == "lib" -%}
 #![deny(missing_docs)]
 {% endif -%}
 
 
-{% if kind = "bin" -%}
+{% if kind == "bin" -%}
 fn main() {
     println!("Hello, world!");
 }
 {% else %}
+/// Method to add two variables
 pub fn add(left: u64, right: u64) -> u64 {
     left + right
 }

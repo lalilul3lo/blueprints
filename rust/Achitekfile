@@ -1,0 +1,53 @@
+blueprint {
+  version = "1.0.0"
+  name = "rust"
+  description = "Rust Project"
+}
+
+prompt "author" {
+  type = string
+  help = "Name of project author/maintainer"
+}
+
+prompt "project" {
+  type = string
+  help = "Name of project"
+}
+
+prompt "repository" {
+  type = string
+  help = "Git url of repository"
+}
+
+prompt "description" {
+  type = paragraph
+  help = "Description of project"
+}
+
+prompt "kind" {
+  type = select
+  help = "--bin or --lib"
+  choices = ["bin", "lib"]
+}
+
+prompt "license" {
+  type = select
+  help = "License"
+  choices = ["MIT", "Apache-2.0", "GPL-2.0-only", "recommended"]
+}
+
+prompt "dev_profile" {
+  type = select
+  help = "Cargo wizard based dev profile"
+  choices = ["FastCompile", "FastRuntime", "MinBinSize"]
+}
+
+prompt "release_profile" {
+  type = select
+  help = "Cargo wizard based release profile"
+  choices = ["FastCompile", "FastRuntime", "MinBinSize"]
+}
+
+## Support Rust style comments
+## Support when going to newline from a comment that it continues
+## Question: Will this be binary or deployed to crates.io => then add tests/integration.rs
