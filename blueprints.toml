@@ -3,3 +3,6 @@ path = "./rust"
 
 [python-fast-api]
 path = "./python-fast-api"
+
+[svelte-kit]
+path = "./svelte-kit"

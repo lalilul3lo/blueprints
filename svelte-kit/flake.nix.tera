@@ -1,0 +1,42 @@
+{
+  description = "{{project}} development environment";
+
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+
+  inputs.flake-utils.url = "github:numtide/flake-utils";
+
+  inputs.nil.url = "github:oxalica/nil/c8e8ce72442a164d89d3fdeaae0bcc405f8c015a";
+
+  inputs.nil.flake = true;
+
+  outputs =
+    {
+      self,
+      nil,
+      nixpkgs,
+      flake-utils,
+      ...
+    }:
+    flake-utils.lib.eachDefaultSystem (
+      system:
+      let
+        pkgs = import nixpkgs {
+          inherit system;
+        };
+        nix-lsp-server = nil.packages.${system}.nil;
+      in
+      {
+        devShells.default =
+          with pkgs;
+          mkShell {
+            buildInputs = [
+              nodejs_24
+              bun
+              typescript
+              typescript-language-server
+              nix-lsp-server
+            ];
+          };
+      }
+    );
+}

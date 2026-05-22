@@ -1,0 +1,30 @@
+blueprint {
+  version = "1.0.0"
+  name = "svelte-kit"
+  description = "Sveltekit project"
+}
+
+prompt "author" {
+  type = string
+  help = "Name of project author/maintainer"
+}
+
+prompt "email" {
+  type = string
+  help = "Email of author"
+}
+
+prompt "project" {
+  type = string
+  help = "Name of project"
+}
+
+prompt "repository" {
+  type = string
+  help = "Git url of repository"
+}
+
+prompt "description" {
+  type = paragraph
+  help = "Description of project"
+}
