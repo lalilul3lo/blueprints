@@ -1,0 +1,7 @@
+# List available recipes
+default:
+    @just --list
+
+dev:
+  bun run dev
+
